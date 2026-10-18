@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToDo リスト</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- ヘッダー -->
+    <header class="app-header">
+      <div class="header-left">
+        <i class="fa-solid fa-list-check logo-icon"></i>
+        <h1>ToDo リスト</h1>
+      </div>
+      <div class="header-right">
+        <button id="themeToggleBtn" class="icon-btn" title="テーマ切り替え">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button id="backupBtn" class="icon-btn" title="データ管理 (保存/復元)">
+          <i class="fa-solid fa-cloud-arrow-down"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- 進捗バーエリア -->
+    <section class="progress-section">
+      <div class="progress-header">
+        <span class="progress-title">全体の進捗</span>
+        <span id="progressText" class="progress-text">0 / 0 完了 (0%)</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div id="progressBar" class="progress-bar-fill" style="width: 0%;"></div>
+      </div>
+    </section>
+
+    <!-- タスク入力フォーム -->
+    <section class="input-section">
+      <form id="todoForm" class="todo-form">
+        <div class="input-main">
+          <input 
+            type="text" 
+            id="taskInput" 
+            placeholder="新しいタスクを入力してください..." 
+            autocomplete="off"
+            required
+          />
+          <button type="submit" id="addBtn" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> 追加
+          </button>
+        </div>
+        
+        <div class="input-options">
+          <!-- 優先度 -->
+          <div class="option-item">
+            <label for="prioritySelect"><i class="fa-solid fa-flag"></i> 優先度</label>
+            <select id="prioritySelect">
+              <option value="medium" selected>通常 (中)</option>
+              <option value="high">重要 (高)</option>
+              <option value="low">低</option>
+            </select>
+          </div>
+
+          <!-- カテゴリ -->
+          <div class="option-item">
+            <label for="categorySelect"><i class="fa-solid fa-folder"></i> カテゴリ</label>
+            <select id="categorySelect">
+              <option value="general" selected>一般</option>
+              <option value="work">仕事</option>
+              <option value="private">プライベート</option>
+              <option value="shopping">買い物</option>
+              <option value="study">勉強</option>
+            </select>
+          </div>
+
+          <!-- 期限日 -->
+          <div class="option-item">
+            <label for="dueDateInput"><i class="fa-regular fa-calendar"></i> 期限</label>
+            <input type="date" id="dueDateInput" />
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- 検索 & フィルターバー -->
+    <section class="controls-section">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" placeholder="タスクを検索..." />
+        <button id="clearSearchBtn" class="clear-search-btn" title="検索クリア">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="filter-group">
+        <!-- ステータスフィルター -->
+        <div class="filter-tabs">
+          <button class="filter-tab active" data-filter="all">すべて</button>
+          <button class="filter-tab" data-filter="active">未完了</button>
+          <button class="filter-tab" data-filter="completed">完了済み</button>
+        </div>
+
+        <div class="filter-dropdowns">
+          <!-- カテゴリフィルター -->
+          <select id="filterCategory" class="select-sm">
+            <option value="all">すべてのカテゴリ</option>
+            <option value="general">一般</option>
+            <option value="work">仕事</option>
+            <option value="private">プライベート</option>
+            <option value="shopping">買い物</option>
+            <option value="study">勉強</option>
+          </select>
+
+          <!-- ソート -->
+          <select id="sortBy" class="select-sm">
+            <option value="createdAt-desc">作成日 (新しい順)</option>
+            <option value="createdAt-asc">作成日 (古い順)</option>
+            <option value="dueDate-asc">期限日 (近い順)</option>
+            <option value="dueDate-desc">期限日 (遅い順)</option>
+            <option value="priority-desc">優先度 (高い順)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- タスク一覧エリア -->
+    <section class="tasks-section">
+      <div class="tasks-header">
+        <span id="taskCountLabel" class="task-count">タスク: 0 件</span>
+        <button id="clearCompletedBtn" class="btn-text-danger" title="完了済みタスクをまとめて削除">
+          <i class="fa-regular fa-trash-can"></i> 完了済みを削除
+        </button>
+      </div>
+
+      <ul id="taskList" class="task-list">
+        <!-- JavaScriptで動的生成 -->
+      </ul>
+
+      <!-- タスクが空の場合のプレースホルダー -->
+      <div id="emptyState" class="empty-state">
+        <i class="fa-regular fa-clipboard empty-icon"></i>
+        <p class="empty-title">タスクがありません</p>
+        <p class="empty-desc">新しいタスクを追加して、1日を整理しましょう！</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- 編集モーダル -->
+  <div id="editModal" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-regular fa-pen-to-square"></i> タスクの編集</h3>
+        <button id="closeEditModal" class="close-btn">&times;</button>
+      </div>
+      <form id="editForm">
+        <input type="hidden" id="editTaskId" />
+        <div class="form-group">
+          <label for="editTaskInput">タスク内容</label>
+          <input type="text" id="editTaskInput" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editPrioritySelect">優先度</label>
+            <select id="editPrioritySelect">
+              <option value="high">重要 (高)</option>
+              <option value="medium">通常 (中)</option>
+              <option value="low">低</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editCategorySelect">カテゴリ</label>
+            <select id="editCategorySelect">
+              <option value="general">一般</option>
+              <option value="work">仕事</option>
+              <option value="private">プライベート</option>
+              <option value="shopping">買い物</option>
+              <option value="study">勉強</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="editDueDateInput">期限日</label>
+          <input type="date" id="editDueDateInput" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="cancelEditBtn" class="btn-secondary">キャンセル</button>
+          <button type="submit" class="btn-primary">保存する</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- データ管理（インポート/エクスポート）モーダル -->
+  <div id="backupModal" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-database"></i> データの保存・復元</h3>
+        <button id="closeBackupModal" class="close-btn">&times;</button>
+      </div>
+      <div class="backup-body">
+        <p class="backup-desc">ブラウザのローカルに保存されているToDoデータをJSONファイルとしてバックアップしたり、保存したファイルから復元できます。</p>
+        
+        <div class="backup-actions">
+          <div class="backup-card">
+            <h4><i class="fa-solid fa-file-export"></i> エクスポート</h4>
+            <p>現在のタスクをファイルにダウンロードします。</p>
+            <button id="exportBtn" class="btn-outline">
+              <i class="fa-solid fa-download"></i> JSONをダウンロード
+            </button>
+          </div>
+          
+          <div class="backup-card">
+            <h4><i class="fa-solid fa-file-import"></i> インポート</h4>
+            <p>ダウンロードしたJSONファイルからタスクを読み込みます。</p>
+            <label for="importFile" class="btn-outline file-label">
+              <i class="fa-solid fa-upload"></i> ファイルを選択
+            </label>
+            <input type="file" id="importFile" accept=".json" style="display: none;" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- トースト通知 -->
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
