@@ -18,10 +18,10 @@ jobs:
         run: |
           test -f index.html
           test -f style.css
-          test -f script.js
+          test -f app.js
 
       - name: Check JavaScript syntax
-        run: node --check script.js
+        run: node --check app.js
 
   deploy:
     name: deploy
