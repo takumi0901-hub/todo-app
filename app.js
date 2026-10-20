@@ -588,3 +588,5 @@ function showToast(message) {
 
 // アプリ開始
 document.addEventListener('DOMContentLoaded', init);
+
+   }}}
