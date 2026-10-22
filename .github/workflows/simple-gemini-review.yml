@@ -1,0 +1,39 @@
+name: Simple Gemini Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Make diff
+        run: git diff HEAD^1 HEAD | head -c 60000 > pr.diff
+
+      - name: Review with Gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_CLI_TRUST_WORKSPACE: "true"
+        run: |
+          npm install -g @google/gemini-cli
+          if [ -s pr.diff ]; then
+            cat pr.diff | gemini -m "${{ vars.GEMINI_MODEL }}" -p "以下はプルリクエストの差分です。HTML/CSS/JavaScriptで作ったToDoアプリの変更をレビューし、バグ、読みにくい点、改善案を、初心者にも分かるように日本語で、箇条書きで簡潔に指摘してください。問題がなければ、その旨を書いてください。" > review.md
+          else
+            echo "レビュー対象の差分がありません。" > review.md
+          fi
+
+      - name: Post comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr comment ${{ github.event.pull_request.number }} --body-file review.md
