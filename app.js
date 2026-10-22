@@ -588,3 +588,8 @@ function showToast(message) {
 
 // アプリ開始
 document.addEventListener('DOMContentLoaded', init);
+
+function debugLog(message) {
+  console.log("debug: " + message)
+  var unused = 123
+}
