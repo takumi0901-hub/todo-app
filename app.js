@@ -201,7 +201,7 @@ function loadTasks() {
   if (saved) {
     try {
       tasks = JSON.parse(saved);
-    } catch (e) {
+   // } catch (e) {
       console.error('Failed to parse tasks from storage', e);
       tasks = DEFAULT_TASKS;
     }
@@ -592,4 +592,4 @@ document.addEventListener('DOMContentLoaded', init);
 function debugLog(message) {
   console.log("debug: " + message)
   var unused = 123
-}
+}  
