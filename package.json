@@ -1,0 +1,28 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "ブラウザで手軽に使える、モダンで高機能な ToDo リスト Web アプリケーションです。  \r Node.js などの外部環境や事前インストールの必要がなく、ダブルクリックするだけですぐに使えます。",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/takumi0901-hub/todo-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/takumi0901-hub/todo-app/issues"
+  },
+  "homepage": "https://github.com/takumi0901-hub/todo-app#readme",
+  "jest": {
+    "testEnvironment": "jsdom"
+  },
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2"
+  }
+}
